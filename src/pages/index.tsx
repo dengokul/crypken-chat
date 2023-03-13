@@ -33,3 +33,50 @@ export default function FileQandA() {
     </div>
   );
 }
+
+
+// const axios = require('axios');
+
+// // Define the API endpoint and parameters
+// const openaiEndpoint = 'https://api.openai.com/v1/classifications';
+// const apiKey = 'YOUR_API_KEY';
+
+// // Define the input text
+// const inputText = 'Hi! How are you doing?';
+
+// // Define the parameters for the OpenAI API endpoint
+// const openaiParams = {
+//   model: 'text-davinci-002',
+//   query: inputText,
+// labels: ['greeting', 'question', 'statement'],
+//   search_model: 'text-davinci-002',
+//   model_bias: -1
+// };
+
+// // Use axios to make a call to the OpenAI API
+// axios.post(openaiEndpoint, openaiParams, {
+//   headers: {
+//     'Content-Type': 'application/json',
+//     'Authorization': `Bearer ${apiKey}`
+//   }
+// }).then(openaiResponse => {
+//   const label = openaiResponse.data.label[0].toUpperCase() + openaiResponse.data.label.slice(1);
+//   console.log(`Intent: ${label}`);
+  
+//   // Choose a different API or approach based on the determined intent
+//   switch (label) {
+//     case 'Greeting':
+//       console.log('Hello!');
+//       break;
+//     case 'Question':
+//       // Use a question answering API or approach
+//       break;
+//     case 'Statement':
+//       // Use a text generation API or approach
+//       break;
+//     default:
+//       console.log('Sorry, I didn\'t understand what you said.');
+//   }
+// }).catch(error => {
+//   console.log(`Error classifying text: ${error}`);
+// });

@@ -12,7 +12,8 @@ type FileQandAAreaProps = {
   files: FileLite[];
 };
 
-const API_URL = "http://localhost:5000";
+// const API_URL = "http://localhost:5000";
+const API_URL = "https://crypken-chat-server.onrender.com";
 
 function FileQandAArea(props: FileQandAAreaProps) {
   const questionRef = useRef(null);

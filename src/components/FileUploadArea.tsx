@@ -13,7 +13,9 @@ import { compact } from "lodash";
 import LoadingText from "./LoadingText";
 import { FileLite } from "../types/file";
 import FileViewerList from "./FileViewerList";
-const API_URL = "http://localhost:5000";
+
+// const API_URL = "http://localhost:5000";
+const API_URL = "https://crypken-chat-server.onrender.com";
 
 type FileUploadAreaProps = {
   handleSetFiles: Dispatch<SetStateAction<FileLite[]>>;

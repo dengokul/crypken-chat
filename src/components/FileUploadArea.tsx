@@ -13,6 +13,7 @@ import { compact } from "lodash";
 import LoadingText from "./LoadingText";
 import { FileLite } from "../types/file";
 import FileViewerList from "./FileViewerList";
+const API_URL = "http://localhost:5000";
 
 type FileUploadAreaProps = {
   handleSetFiles: Dispatch<SetStateAction<FileLite[]>>;
@@ -47,9 +48,10 @@ function FileUploadArea(props: FileUploadAreaProps) {
         const uploadedFiles = await Promise.all(
           Array.from(selectedFiles).map(async (file) => {
             // Check the file type
+            // /(text\/plain|application\/(pdf|msword|vnd\.openxmlformats-officedocument\.wordprocessingml\.document)|text\/(markdown|x-markdown))/
             if (
               file.type.match(
-                /(text\/plain|application\/(pdf|msword|vnd\.openxmlformats-officedocument\.wordprocessingml\.document)|text\/(markdown|x-markdown))/
+                /(text\/plain|application\/(pdf|x-markdown))/
               ) && // AND file isn't too big
               file.size < props.maxFileSizeMB * 1024 * 1024
             ) {
@@ -64,7 +66,7 @@ function FileUploadArea(props: FileUploadAreaProps) {
 
               try {
                 const processFileResponse = await axios.post(
-                  "/api/process-file",
+                  API_URL+"/api/process-file",
                   formData,
                   {
                     headers: {
@@ -101,8 +103,11 @@ function FileUploadArea(props: FileUploadAreaProps) {
               }
             } else {
               alert(
-                `Invalid file type or size. Only TXT, PDF, DOCX or MD are allowed, up to ${props.maxFileSizeMB}MB.`
+                `Invalid file type or size. Only PDF allowed, up to ${props.maxFileSizeMB}MB.`
               );
+              // alert(
+              //   `Invalid file type or size. Only TXT, PDF, DOCX or MD are allowed, up to ${props.maxFileSizeMB}MB.`
+              // );
               return null; // Skip this file
             }
           })
@@ -169,17 +174,18 @@ function FileUploadArea(props: FileUploadAreaProps) {
                 and drop
               </p>
               <p className="text-xs">
-                TXT, PDF, DOCX or MD (max {props.maxFileSizeMB}MB per file)
+                {/* TXT, PDF, DOCX or MD (max {props.maxFileSizeMB}MB per file) */}
+                PDF (max {props.maxFileSizeMB}MB per file)
               </p>
-              <p className="text-xs mt-1">
+              {/* <p className="text-xs mt-1">
                 You can upload up to {props.maxNumFiles - files.length} more{" "}
                 {props.maxNumFiles - files.length === 1 ? "file" : "files"}
-              </p>
+              </p> */}
               <input
                 id="dropzone-file"
                 type="file"
                 className="hidden"
-                multiple
+                // multiple
                 onChange={(event) => handleFileChange(event.target.files)}
               />
             </div>

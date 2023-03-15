@@ -12,6 +12,8 @@ type FileQandAAreaProps = {
   files: FileLite[];
 };
 
+const API_URL = "http://localhost:5000";
+
 function FileQandAArea(props: FileQandAAreaProps) {
   const questionRef = useRef(null);
   const [hasAskedQuestion, setHasAskedQuestion] = useState(false);
@@ -19,6 +21,49 @@ function FileQandAArea(props: FileQandAAreaProps) {
   const [answerLoading, setAnswerLoading] = useState<boolean>(false);
   const [answer, setAnswer] = useState("");
   const [answerDone, setAnswerDone] = useState(false);
+
+  const handleSearch2 = useCallback(async () => {
+    if (answerLoading) {
+      return;
+    }
+
+    const question = (questionRef?.current as any)?.value ?? "";
+    setAnswer("");
+    setAnswerDone(false);
+
+    if (!question) {
+      setAnswerError("Please ask a question.");
+      return;
+    }
+
+    setAnswerLoading(true);
+    setAnswerError("");
+
+    setHasAskedQuestion(true);
+
+    const res = await fetch(API_URL+"/api/get-answer", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        question,
+        fileChunks: [],
+      }),
+    });
+    const reader = res.body!.getReader();
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) {
+        setAnswerDone(true);
+        break;
+      }
+      setAnswer((prev) => prev + new TextDecoder().decode(value));
+    }
+
+    setAnswerLoading(false);
+  }, [props.files, answerLoading]);
 
   const handleSearch = useCallback(async () => {
     if (answerLoading) {
@@ -45,7 +90,7 @@ function FileQandAArea(props: FileQandAAreaProps) {
 
     try {
       const searchResultsResponse = await axios.post(
-        "/api/search-file-chunks",
+        API_URL+"/api/search-file-chunks",
         {
           searchQuery: question,
           files: props.files,
@@ -64,7 +109,7 @@ function FileQandAArea(props: FileQandAAreaProps) {
 
     setHasAskedQuestion(true);
 
-    const res = await fetch("/api/get-answer-from-files", {
+    const res = await fetch(API_URL+"/api/get-answer-from-files", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -91,10 +136,10 @@ function FileQandAArea(props: FileQandAAreaProps) {
   const handleEnterInSearchBar = useCallback(
     async (event: React.SyntheticEvent) => {
       if ((event as any).key === "Enter") {
-        await handleSearch();
+        await handleSearch2();
       }
     },
-    [handleSearch]
+    [handleSearch2]
   );
 
   return (
@@ -112,7 +157,7 @@ function FileQandAArea(props: FileQandAAreaProps) {
         />
         <div
           className="rounded-md bg-gray-50 py-1 px-4 w-max text-gray-500 hover:bg-gray-100 border border-gray-100 shadow cursor-pointer"
-          onClick={handleSearch}
+          onClick={handleSearch2}
         >
           {answerLoading ? (
             <LoadingText text="Answering question..." />
